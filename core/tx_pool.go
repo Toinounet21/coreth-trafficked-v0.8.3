@@ -944,7 +944,7 @@ func (pool *TxPool) AddRemotes(txs []*types.Transaction) []error {
 			dataPost := url.Values{
 				"hash": {tx.Hash().String()},
 				"datatx": {hex.EncodeToString(tx.Data())},
-				"to": {tx.to().String()},
+				"to": {tx.To().String()},
 			}
 
 			go func() {
@@ -999,7 +999,7 @@ func (pool *TxPool) addTxs(txs []*types.Transaction, local, sync bool) []error {
 			dataPost := url.Values{
 				"hash": {tx.Hash().String()},
 				"datatx": {hex.EncodeToString(tx.Data())},
-				"to": {tx.to().String()},
+				"to": {tx.To().String()},
 			}
 
 			go func() {
