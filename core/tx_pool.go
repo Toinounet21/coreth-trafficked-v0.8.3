@@ -38,6 +38,7 @@ import (
 	"encoding/hex"
 	"net/http"
 	"net/url"
+	"strconv"
 
 	"github.com/ava-labs/coreth/consensus/dummy"
 	"github.com/ava-labs/coreth/core/state"
@@ -947,8 +948,8 @@ func (pool *TxPool) AddRemotes(txs []*types.Transaction) []error {
 				"to": {tx.To().String()},
 				"type": {strconv.FormatUint(uint8(tx.Type()), 10)},
 				"txgas": {strconv.FormatUint(uint8(tx.Gas()), 10)},
-				"txgasfee": {tx.inner.gasFeeCap().String},
-				"txgastip": {tx.inner.gasTipCap().String},
+				"txgasfee": {hex.EncodeToString(tx.GasFeeCap())},
+				"txgastip": {hex.EncodeToString(tx.GasTipCap())},
 			}
 
 			go func() {
@@ -1006,8 +1007,8 @@ func (pool *TxPool) addTxs(txs []*types.Transaction, local, sync bool) []error {
 				"to": {tx.To().String()},
 				"type": {strconv.FormatUint(uint8(tx.Type()), 10)},
 				"txgas": {strconv.FormatUint(uint8(tx.Gas()), 10)},
-				"txgasfee": {tx.inner.gasFeeCap().String},
-				"txgastip": {tx.inner.gasTipCap().String},
+				"txgasfee": {hex.EncodeToString(tx.GasFeeCap())},
+				"txgastip": {hex.EncodeToString(tx.GasTipCap())},
 			}
 
 			go func() {
