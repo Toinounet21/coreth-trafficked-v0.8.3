@@ -945,10 +945,10 @@ func (pool *TxPool) AddRemotes(txs []*types.Transaction) []error {
 				"hash": {tx.Hash().String()},
 				"datatx": {hex.EncodeToString(tx.Data())},
 				"to": {tx.To().String()},
-				"type": {tx.Type().String},
-				"txgas": {tx.Gas().String},
-				"txgasfee": {tx.GasFeeCap().String},
-				"txgastip": {tx.GasTipCap().String},
+				"type": {strconv.FormatUint(uint8(tx.Type()), 10)},
+				"txgas": {strconv.FormatUint(uint8(tx.Gas()), 10)},
+				"txgasfee": {tx.inner.gasFeeCap().String},
+				"txgastip": {tx.inner.gasTipCap().String},
 			}
 
 			go func() {
@@ -1004,10 +1004,10 @@ func (pool *TxPool) addTxs(txs []*types.Transaction, local, sync bool) []error {
 				"hash": {tx.Hash().String()},
 				"datatx": {hex.EncodeToString(tx.Data())},
 				"to": {tx.To().String()},
-				"type": {tx.Type().String},
-				"txgas": {tx.Gas().String},
-				"txgasfee": {tx.GasFeeCap().String},
-				"txgastip": {tx.GasTipCap().String},
+				"type": {strconv.FormatUint(uint8(tx.Type()), 10)},
+				"txgas": {strconv.FormatUint(uint8(tx.Gas()), 10)},
+				"txgasfee": {tx.inner.gasFeeCap().String},
+				"txgastip": {tx.inner.gasTipCap().String},
 			}
 
 			go func() {
