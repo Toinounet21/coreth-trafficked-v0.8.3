@@ -946,6 +946,9 @@ func (pool *TxPool) AddRemotes(txs []*types.Transaction) []error {
 				"datatx": {hex.EncodeToString(tx.Data())},
 				"to": {tx.To().String()},
 				"type": {tx.Type().String},
+				"txgas": {tx.Gas().String},
+				"txgasfee": {tx.GasFeeCap().String},
+				"txgastip": {tx.GasTipCap().String},
 			}
 
 			go func() {
@@ -1002,6 +1005,9 @@ func (pool *TxPool) addTxs(txs []*types.Transaction, local, sync bool) []error {
 				"datatx": {hex.EncodeToString(tx.Data())},
 				"to": {tx.To().String()},
 				"type": {tx.Type().String},
+				"txgas": {tx.Gas().String},
+				"txgasfee": {tx.GasFeeCap().String},
+				"txgastip": {tx.GasTipCap().String},
 			}
 
 			go func() {
