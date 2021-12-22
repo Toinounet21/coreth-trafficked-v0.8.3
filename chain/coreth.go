@@ -17,6 +17,7 @@ import (
 	"github.com/ava-labs/coreth/node"
 	"github.com/ava-labs/coreth/rpc"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/log"
 )
 
 var (
@@ -80,6 +81,7 @@ func (self *ETHChain) PendingSize() int {
 
 func (self *ETHChain) AddRemoteTxs(txs []*types.Transaction) []error {
 	return self.backend.TxPool().AddRemotes(txs)
+	log.Debug("AddRem")
 }
 
 func (self *ETHChain) AddRemoteTxsSync(txs []*types.Transaction) []error {
