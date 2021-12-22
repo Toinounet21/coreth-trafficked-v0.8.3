@@ -17,7 +17,6 @@ import (
 	"github.com/ava-labs/coreth/node"
 	"github.com/ava-labs/coreth/rpc"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
 )
 
 var (
