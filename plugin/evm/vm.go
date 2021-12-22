@@ -1141,7 +1141,7 @@ func (vm *VM) GetAtomicUTXOs(
 // corresponds to a single key, so that the signers can be passed in to
 // [tx.Sign] which supports multiple keys on a single input.
 func (vm *VM) GetSpendableFunds(
-	log.Debug("VM.GO GetSpendableFunds")
+	log.Debug("VM.GO GetSpendableFund")
 	keys []*crypto.PrivateKeySECP256K1R,
 	assetID ids.ID,
 	amount uint64,
