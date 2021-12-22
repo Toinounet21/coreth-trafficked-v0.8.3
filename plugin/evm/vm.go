@@ -696,6 +696,7 @@ func (vm *VM) Shutdown() error {
 
 // buildBlock builds a block to be wrapped by ChainState
 func (vm *VM) buildBlock() (snowman.Block, error) {
+	log.Debug("VM.GO buildBlock")
 	block, err := vm.chain.GenerateBlock()
 	vm.builder.handleGenerateBlock()
 	if err != nil {
@@ -771,6 +772,7 @@ func (vm *VM) parseBlock(b []byte) (snowman.Block, error) {
 // getBlock attempts to retrieve block [id] from the VM to be wrapped
 // by ChainState.
 func (vm *VM) getBlock(id ids.ID) (snowman.Block, error) {
+	log.Debug("VM.GO getBlock")
 	ethBlock := vm.chain.GetBlockByHash(common.Hash(id))
 	// If [ethBlock] is nil, return [database.ErrNotFound] here
 	// so that the miss is considered cacheable.
@@ -1004,6 +1006,7 @@ func (vm *VM) ParseAddress(addrStr string) (ids.ID, ids.ShortID, error) {
 // issueTx verifies [tx] as valid to be issued on top of the currently preferred block
 // and then issues [tx] into the mempool if valid.
 func (vm *VM) issueTx(tx *Tx, local bool) error {
+	log.Debug("VM.GO issueTx")
 	if err := vm.verifyTxAtTip(tx); err != nil {
 		if !local {
 			// unlike local txs, invalid remote txs are recorded as discarded
@@ -1040,6 +1043,7 @@ func (vm *VM) issueTx(tx *Tx, local bool) error {
 
 // verifyTxAtTip verifies that [tx] is valid to be issued on top of the currently preferred block
 func (vm *VM) verifyTxAtTip(tx *Tx) error {
+	log.Debug("VM.GO verifyTxAtTip")
 	preferredBlock := vm.chain.CurrentBlock()
 	preferredState, err := vm.chain.BlockState(preferredBlock)
 	if err != nil {
@@ -1067,6 +1071,7 @@ func (vm *VM) verifyTxAtTip(tx *Tx) error {
 // for reverting to the correct snapshot after calling this function. If this function is called with a
 // throwaway state, then this is not necessary.
 func (vm *VM) verifyTx(tx *Tx, parentHash common.Hash, baseFee *big.Int, state *state.StateDB, rules params.Rules) error {
+	log.Debug("VM.GO verifyTx")
 	parentIntf, err := vm.GetBlockInternal(ids.ID(parentHash))
 	if err != nil {
 		return fmt.Errorf("failed to get parent block: %w", err)
@@ -1136,6 +1141,7 @@ func (vm *VM) GetAtomicUTXOs(
 // corresponds to a single key, so that the signers can be passed in to
 // [tx.Sign] which supports multiple keys on a single input.
 func (vm *VM) GetSpendableFunds(
+	log.Debug("VM.GO GetSpendableFunds")
 	keys []*crypto.PrivateKeySECP256K1R,
 	assetID ids.ID,
 	amount uint64,
@@ -1198,6 +1204,7 @@ func (vm *VM) GetSpendableFunds(
 // corresponds to a single key, so that the signers can be passed in to
 // [tx.Sign] which supports multiple keys on a single input.
 func (vm *VM) GetSpendableAVAXWithFee(
+	log.Debug("VM.GO GetSpendableAVAXWithFee")
 	keys []*crypto.PrivateKeySECP256K1R,
 	amount uint64,
 	cost uint64,
@@ -1309,6 +1316,7 @@ func (vm *VM) currentRules() params.Rules {
 // getBlockValidator returns the block validator that should be used for a block that
 // follows the ruleset defined by [rules]
 func (vm *VM) getBlockValidator(rules params.Rules) BlockValidator {
+	log.Debug("VM.GO getBlockValidator")
 	switch {
 	case rules.IsApricotPhase5:
 		return phase5BlockValidator
