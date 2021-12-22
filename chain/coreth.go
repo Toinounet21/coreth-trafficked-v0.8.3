@@ -81,7 +81,6 @@ func (self *ETHChain) PendingSize() int {
 
 func (self *ETHChain) AddRemoteTxs(txs []*types.Transaction) []error {
 	return self.backend.TxPool().AddRemotes(txs)
-	log.Debug("CORETH.GO AddRemoteTxs")
 }
 
 func (self *ETHChain) AddRemoteTxsSync(txs []*types.Transaction) []error {
