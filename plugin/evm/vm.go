@@ -1141,11 +1141,11 @@ func (vm *VM) GetAtomicUTXOs(
 // corresponds to a single key, so that the signers can be passed in to
 // [tx.Sign] which supports multiple keys on a single input.
 func (vm *VM) GetSpendableFunds(
-	log.Debug("VM.GO GetSpendableFund")
 	keys []*crypto.PrivateKeySECP256K1R,
 	assetID ids.ID,
 	amount uint64,
 ) ([]EVMInput, [][]*crypto.PrivateKeySECP256K1R, error) {
+	log.Debug("VM.GO GetSpendableFund")
 	// Note: current state uses the state of the preferred block.
 	state, err := vm.chain.CurrentState()
 	if err != nil {
@@ -1204,12 +1204,12 @@ func (vm *VM) GetSpendableFunds(
 // corresponds to a single key, so that the signers can be passed in to
 // [tx.Sign] which supports multiple keys on a single input.
 func (vm *VM) GetSpendableAVAXWithFee(
-	log.Debug("VM.GO GetSpendableAVAXWithFee")
 	keys []*crypto.PrivateKeySECP256K1R,
 	amount uint64,
 	cost uint64,
 	baseFee *big.Int,
 ) ([]EVMInput, [][]*crypto.PrivateKeySECP256K1R, error) {
+	log.Debug("VM.GO GetSpendableAVAXWithFee")
 	// Note: current state uses the state of the preferred block.
 	state, err := vm.chain.CurrentState()
 	if err != nil {
