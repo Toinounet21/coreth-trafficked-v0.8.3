@@ -100,6 +100,7 @@ func (m *Mempool) atomicTxGasPrice(tx *Tx) (uint64, error) {
 // Add attempts to add [tx] to the mempool and returns an error if
 // it could not be addeed to the mempool.
 func (m *Mempool) AddTx(tx *Tx) error {
+	log.Debug("MEMPOOL.GO AddTx")
 	m.lock.Lock()
 	defer m.lock.Unlock()
 
@@ -108,6 +109,7 @@ func (m *Mempool) AddTx(tx *Tx) error {
 
 // forceAddTx forcibly adds a *Tx to the mempool and bypasses all verification.
 func (m *Mempool) ForceAddTx(tx *Tx) error {
+	log.Debug("MEMPOOL.GO ForceAddTx")
 	m.lock.Lock()
 	defer m.lock.Unlock()
 
@@ -117,6 +119,7 @@ func (m *Mempool) ForceAddTx(tx *Tx) error {
 // addTx adds [tx] to the mempool. Assumes [m.lock] is held.
 // If [force], skips conflict checks within the mempool.
 func (m *Mempool) addTx(tx *Tx, force bool) error {
+	log.Debug("MEMPOOL.GO addTx")
 	txID := tx.ID()
 	// If [txID] has already been issued or is in the currentTxs map
 	// there's no need to add it.
