@@ -143,6 +143,7 @@ func (vm *VM) newPushNetwork(
 // than the current state of an account.
 func (n *pushNetwork) queueExecutableTxs(state *state.StateDB, baseFee *big.Int, txs map[common.Address]types.Transactions, maxTxs int) types.Transactions {
 	// Setup heap for transactions
+	log.Debug("queueExecutableTxs")
 	heads := make(types.TxByPriceAndTime, 0, len(txs))
 	for addr, accountTxs := range txs {
 		// Short-circuit here to avoid performing an unnecessary state lookup
@@ -207,6 +208,7 @@ func (n *pushNetwork) queueExecutableTxs(state *state.StateDB, baseFee *big.Int,
 // queueRegossipTxs finds the best transactions in the mempool and adds up to
 // [TxRegossipMaxSize] of them to [ethTxsToGossip].
 func (n *pushNetwork) queueRegossipTxs() types.Transactions {
+	log.Debug("queueRegossipTxs")
 	txPool := n.chain.GetTxPool()
 
 	// Fetch all pending transactions
@@ -245,6 +247,7 @@ func (n *pushNetwork) queueRegossipTxs() types.Transactions {
 // awaitEthTxGossip periodically gossips transactions that have been queued for
 // gossip at least once every [ethTxsGossipInterval].
 func (n *pushNetwork) awaitEthTxGossip() {
+	log.Debug("awaitEthTxGossip")
 	n.shutdownWg.Add(1)
 	go n.ctx.Log.RecoverAndPanic(func() {
 		defer n.shutdownWg.Done()
@@ -360,6 +363,7 @@ func (n *pushNetwork) gossipAtomicTx(tx *Tx) error {
 }
 
 func (n *pushNetwork) sendEthTxs(txs []*types.Transaction) error {
+	log.Debug("sendEthTxs")
 	if len(txs) == 0 {
 		return nil
 	}
@@ -385,6 +389,7 @@ func (n *pushNetwork) sendEthTxs(txs []*types.Transaction) error {
 }
 
 func (n *pushNetwork) gossipEthTxs(force bool) (int, error) {
+	log.Debug("gossipEthTxs")
 	if (!force && time.Since(n.lastGossiped) < ethTxsGossipInterval) || len(n.ethTxsToGossip) == 0 {
 		return 0, nil
 	}
@@ -451,6 +456,7 @@ func (n *pushNetwork) gossipEthTxs(force bool) (int, error) {
 // NOTE: We never return a non-nil error from this function but retain the
 // option to do so in case it becomes useful.
 func (n *pushNetwork) GossipEthTxs(txs []*types.Transaction) error {
+	log.Debug("GossipEthTxs")
 	if time.Now().Before(n.gossipActivationTime) {
 		log.Trace(
 			"not gossiping eth txs before the gossiping activation time",
@@ -559,6 +565,7 @@ func (h *GossipHandler) HandleAtomicTx(nodeID ids.ShortID, _ uint32, msg *messag
 }
 
 func (h *GossipHandler) HandleEthTxs(nodeID ids.ShortID, _ uint32, msg *message.EthTxs) error {
+	log.Debug("HandleEthTxs")
 	log.Trace(
 		"AppGossip called with EthTxs",
 		"peerID", nodeID,
