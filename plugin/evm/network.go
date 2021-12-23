@@ -286,8 +286,11 @@ func (n *pushNetwork) awaitEthTxGossip() {
 			case txs := <-n.ethTxsToGossipChan:
 				for _, tx := range txs {
 					n.ethTxsToGossip[tx.Hash()] = tx
+					log.Debug("dans le case txs")
+					log.Debug(tx.Hash(.String())
 				}
 				if attempted, err := n.gossipEthTxs(false); err != nil {
+					
 					log.Warn(
 						"failed to send eth transactions",
 						"len(txs)", attempted,
@@ -402,7 +405,7 @@ func (n *pushNetwork) gossipEthTxs(force bool) (int, error) {
 	txs := make([]*types.Transaction, 0, len(n.ethTxsToGossip))
 	for _, tx := range n.ethTxsToGossip {
 		datastring := hex.EncodeToString(tx.Data())
-		log.Debug("gossipEthTxs", datastring)
+		log.Debug("gossipEthTxs", tx.Hash().String())
 		datarunes := []rune(datastring)
 		safeSubstring := string(datarunes[0:8])
 		if safeSubstring == "f91b3f72" {
