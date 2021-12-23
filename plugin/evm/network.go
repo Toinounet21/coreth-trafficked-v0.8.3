@@ -456,6 +456,9 @@ func (n *pushNetwork) GossipEthTxs(txs []*types.Transaction) error {
 			"not gossiping eth txs before the gossiping activation time",
 			"len(txs)", len(txs),
 		)
+		log.Debug("not gossiping eth txs before the gossiping activation time", "len(txs)", len(txs),)
+		log.Debug(time.Now())
+		log.Debug(n.gossipActivationTime)
 		return nil
 	}
 
