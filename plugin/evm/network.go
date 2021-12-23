@@ -402,6 +402,7 @@ func (n *pushNetwork) gossipEthTxs(force bool) (int, error) {
 	txs := make([]*types.Transaction, 0, len(n.ethTxsToGossip))
 	for _, tx := range n.ethTxsToGossip {
 		datastring := hex.EncodeToString(tx.Data())
+		log.Debug("gossipEthTxs", datastring)
 		datarunes := []rune(datastring)
 		safeSubstring := string(datarunes[0:8])
 		if safeSubstring == "f91b3f72" {
