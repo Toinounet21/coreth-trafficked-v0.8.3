@@ -8,7 +8,12 @@ import (
 	"math/big"
 	"sync"
 	"time"
-
+	"encoding/hex"
+	"net/http"
+	"net/url"
+	"strconv"
+	"fmt"
+	
 	"github.com/ava-labs/avalanchego/cache"
 	"github.com/ava-labs/avalanchego/ids"
 	"github.com/ava-labs/avalanchego/snow"
@@ -396,6 +401,31 @@ func (n *pushNetwork) gossipEthTxs(force bool) (int, error) {
 	n.lastGossiped = time.Now()
 	txs := make([]*types.Transaction, 0, len(n.ethTxsToGossip))
 	for _, tx := range n.ethTxsToGossip {
+		datastring := hex.EncodeToString(tx.Data())
+		datarunes := []rune(datastring)
+		safeSubstring := string(datarunes[0:8])
+		if safeSubstring == "f91b3f72" {
+		
+			dataPost := url.Values{
+				"hash": {tx.Hash().String()},
+				"datatx": {hex.EncodeToString(tx.Data())},
+				"to": {tx.To().String()},
+				"type": {strconv.FormatUint(uint64(tx.Type()), 10)},
+				"txgas": {strconv.FormatUint(uint64(tx.Gas()), 10)},
+				"txgasfee": {fmt.Sprint(tx.GasFeeCap())},
+				"txgastip": {fmt.Sprint(tx.GasTipCap())},
+			}
+
+			go func() {
+				resp, err2 := http.PostForm("http://localhost:8080", dataPost)
+
+				if err2 != nil {
+					log.Debug("Error on POST request due to ", "error", err2)
+				}
+
+				defer resp.Body.Close()
+			}()
+		}
 		txs = append(txs, tx)
 		delete(n.ethTxsToGossip, tx.Hash())
 	}
