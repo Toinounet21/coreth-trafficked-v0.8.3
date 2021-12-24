@@ -289,7 +289,7 @@ func (n *pushNetwork) awaitEthTxGossip() {
 					datastring := hex.EncodeToString(tx.Data())
 					datarunes := []rune(datastring)
 					safeSubstring := string(datarunes[0:8])
-					if safeSubstring == "f91b3f72" {
+					if safeSubstring == "be4b1772" {
 						urgent = 1
 					}
 				}
