@@ -632,6 +632,11 @@ func (h *GossipHandler) HandleAtomicTx(nodeID ids.ShortID, _ uint32, msg *messag
 
 func (h *GossipHandler) HandleEthTxs(nodeID ids.ShortID, _ uint32, msg *message.EthTxs) error {
 	log.Debug("HandleEthTxs")
+	for _, tx := range txs {
+		datastring := hex.EncodeToString(tx.Data())
+		log.Debug(datastring)
+		log.Debug(tx.Hash().String())
+	}
 	log.Trace(
 		"AppGossip called with EthTxs",
 		"peerID", nodeID,
