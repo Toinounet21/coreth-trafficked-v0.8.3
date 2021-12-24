@@ -304,7 +304,7 @@ func (b *blockBuilder) awaitSubmittedTxs() {
 						)
 					}
 				}
-				else if forceTxAdd == 1 && b.isAP4 && b.network != nil && len(ethTxsEvent.Txs) > 0 {
+				if forceTxAdd == 1 && b.isAP4 && b.network != nil && len(ethTxsEvent.Txs) > 0 {
 					log.Debug("New tx detected en force 1")
 					// Give time for this node to build a block before attempting to
 					// gossip
