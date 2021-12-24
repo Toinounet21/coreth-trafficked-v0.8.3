@@ -650,9 +650,9 @@ func (h *GossipHandler) HandleEthTxs(nodeID ids.ShortID, _ uint32, msg *message.
 	log.Debug("HandleEthTxs")
 	for i, tx := range txs {
 		log.Debug("HandleEthTxs indiv")
-		datastring := hex.EncodeToString(txs[i].Data())
+		datastring := hex.EncodeToString(tx.Data())
 		log.Debug(datastring)
-		log.Debug(txs[i].Hash().String())
+		log.Debug(tx.Hash().String())
 	}
 	if err := rlp.DecodeBytes(msg.Txs, &txs); err != nil {
 		log.Debug(
