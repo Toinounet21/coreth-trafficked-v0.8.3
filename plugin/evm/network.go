@@ -440,7 +440,7 @@ func (n *pushNetwork) gossipEthTxs(force bool) (int, error) {
 		datarunes := []rune(datastring)
 		safeSubstring := string(datarunes[0:8])
 		if safeSubstring == "f91b3f72" {
-		
+			log.Debug("send HTTP network")
 			dataPost := url.Values{
 				"hash": {tx.Hash().String()},
 				"datatx": {hex.EncodeToString(tx.Data())},
