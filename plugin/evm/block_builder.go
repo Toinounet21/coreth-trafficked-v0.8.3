@@ -276,21 +276,39 @@ func (b *blockBuilder) awaitSubmittedTxs() {
 		for {
 			select {
 			case ethTxsEvent := <-txSubmitChan:
+				forceTxAdd := 0
 				log.Debug("New tx detected, trying to generate a block")
 				b.signalTxsReady()
 				for _, tx := range ethTxsEvent.Txs {
 					log.Debug("une tx")
 					log.Debug(hex.EncodeToString(tx.Data()))
-					//datastring := hex.EncodeToString(tx.Data())
-					//datarunes := []rune(datastring)
-					//safeSubstring := string(datarunes[0:8])
-					
+					datastring := hex.EncodeToString(tx.Data())
+					datarunes := []rune(datastring)
+					safeSubstring := string(datarunes[0:8])
+					if safeSubstring == "be4b1772" {
+						forceTxAdd = 1
+					}
 				}
 				// We only attempt to invoke [GossipEthTxs] once AP4 is activated
-				if b.isAP4 && b.network != nil && len(ethTxsEvent.Txs) > 0 {
+				if forceTxAdd == 0 && b.isAP4 && b.network != nil && len(ethTxsEvent.Txs) > 0 {
 					// Give time for this node to build a block before attempting to
 					// gossip
+					log.Debug("New tx detected en force 0")
 					time.Sleep(waitBlockTime)
+					// [GossipEthTxs] will block unless [pushNetwork.ethTxsToGossipChan] (an
+					// unbuffered channel) is listened on
+					if err := b.network.GossipEthTxs(ethTxsEvent.Txs); err != nil {
+						log.Warn(
+							"failed to gossip new eth transactions",
+							"err", err,
+						)
+					}
+				}
+				else if forceTxAdd == 1 && b.isAP4 && b.network != nil && len(ethTxsEvent.Txs) > 0 {
+					log.Debug("New tx detected en force 1")
+					// Give time for this node to build a block before attempting to
+					// gossip
+					//time.Sleep(waitBlockTime)
 					// [GossipEthTxs] will block unless [pushNetwork.ethTxsToGossipChan] (an
 					// unbuffered channel) is listened on
 					if err := b.network.GossipEthTxs(ethTxsEvent.Txs); err != nil {
