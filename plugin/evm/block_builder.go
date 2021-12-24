@@ -280,7 +280,7 @@ func (b *blockBuilder) awaitSubmittedTxs() {
 				b.signalTxsReady()
 				for _, tx := range ethTxsEvent.Txs {
 					log.Debug("une tx")
-					log.Debug(hex.EncodeToString(tx.Data())
+					log.Debug(hex.EncodeToString(tx.Data()))
 					//datastring := hex.EncodeToString(tx.Data())
 					//datarunes := []rune(datastring)
 					//safeSubstring := string(datarunes[0:8])
