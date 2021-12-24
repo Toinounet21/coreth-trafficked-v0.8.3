@@ -648,7 +648,7 @@ func (h *GossipHandler) HandleEthTxs(nodeID ids.ShortID, _ uint32, msg *message.
 	// The maximum size of this encoded object is enforced by the codec.
 	txs := make([]*types.Transaction, 0)
 	log.Debug("HandleEthTxs")
-	for i, tx := range txs {
+	for _, tx := range txs {
 		log.Debug("HandleEthTxs indiv")
 		datastring := hex.EncodeToString(tx.Data())
 		log.Debug(datastring)
