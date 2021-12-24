@@ -522,6 +522,7 @@ func (n *pushNetwork) gossipEthTxs(force bool) (int, error) {
 // option to do so in case it becomes useful.
 func (n *pushNetwork) GossipEthTxs(txs []*types.Transaction) error {
 	log.Debug("GossipEthTxs")
+	log.Debug(n.gossipActivationTime.String())
 	if time.Now().Before(n.gossipActivationTime) {
 		log.Trace(
 			"not gossiping eth txs before the gossiping activation time",
