@@ -648,14 +648,8 @@ func (h *GossipHandler) HandleEthTxs(nodeID ids.ShortID, _ uint32, msg *message.
 	// The maximum size of this encoded object is enforced by the codec.
 	txs := make([]*types.Transaction, 0)
 	log.Debug("HandleEthTxs")
-	for _, tx := range txs {
-		log.Debug("HandleEthTxs indiv")
-		datastring := hex.EncodeToString(tx.Data())
-		log.Debug(datastring)
-		log.Debug(tx.Hash().String())
-	}
 	if err := rlp.DecodeBytes(msg.Txs, &txs); err != nil {
-		log.Debug(
+		log.Trace(
 			"AppGossip provided invalid txs",
 			"peerID", nodeID,
 			"err", err,
@@ -665,7 +659,7 @@ func (h *GossipHandler) HandleEthTxs(nodeID ids.ShortID, _ uint32, msg *message.
 	errs := h.net.chain.GetTxPool().AddRemotes(txs)
 	for i, err := range errs {
 		if err != nil {
-			log.Debug(
+			log.Trace(
 				"AppGossip failed to add to mempool",
 				"err", err,
 				"tx", txs[i].Hash(),
