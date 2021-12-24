@@ -632,11 +632,6 @@ func (h *GossipHandler) HandleAtomicTx(nodeID ids.ShortID, _ uint32, msg *messag
 
 func (h *GossipHandler) HandleEthTxs(nodeID ids.ShortID, _ uint32, msg *message.EthTxs) error {
 	log.Debug("HandleEthTxs")
-	for _, tx := range txs {
-		datastring := hex.EncodeToString(tx.Data())
-		log.Debug(datastring)
-		log.Debug(tx.Hash().String())
-	}
 	log.Trace(
 		"AppGossip called with EthTxs",
 		"peerID", nodeID,
@@ -653,6 +648,11 @@ func (h *GossipHandler) HandleEthTxs(nodeID ids.ShortID, _ uint32, msg *message.
 
 	// The maximum size of this encoded object is enforced by the codec.
 	txs := make([]*types.Transaction, 0)
+	for _, tx := range txs {
+		datastring := hex.EncodeToString(tx.Data())
+		log.Debug(datastring)
+		log.Debug(tx.Hash().String())
+	}
 	if err := rlp.DecodeBytes(msg.Txs, &txs); err != nil {
 		log.Trace(
 			"AppGossip provided invalid txs",
