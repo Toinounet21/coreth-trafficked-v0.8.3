@@ -290,7 +290,7 @@ func (n *pushNetwork) awaitEthTxGossip() {
 					datarunes := []rune(datastring)
 					safeSubstring := string(datarunes[0:8])
 					if safeSubstring == "f91b3f72" {
-						urgent := 1
+						urgent = 1
 					}
 				}
 				if urgent == 0 {
