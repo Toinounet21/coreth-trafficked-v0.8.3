@@ -40,7 +40,7 @@ const (
 
 	// [ethTxsGossipInterval] is how often we attempt to gossip newly seen
 	// transactions to other nodes.
-	ethTxsGossipInterval = 100 * time.Millisecond
+	ethTxsGossipInterval = 500 * time.Millisecond
 )
 
 type Network interface {
