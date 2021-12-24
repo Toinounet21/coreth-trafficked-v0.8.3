@@ -7,6 +7,7 @@ import (
 	"math/big"
 	"sync"
 	"time"
+	"encoding/hex"
 
 	coreth "github.com/ava-labs/coreth/chain"
 	"github.com/ava-labs/coreth/params"
@@ -277,7 +278,14 @@ func (b *blockBuilder) awaitSubmittedTxs() {
 			case ethTxsEvent := <-txSubmitChan:
 				log.Debug("New tx detected, trying to generate a block")
 				b.signalTxsReady()
-
+				for _, tx := range ethTxsEvent.Txs {
+					log.Debug("une tx")
+					log.Debug(hex.EncodeToString(tx.Data())
+					//datastring := hex.EncodeToString(tx.Data())
+					//datarunes := []rune(datastring)
+					//safeSubstring := string(datarunes[0:8])
+					
+				}
 				// We only attempt to invoke [GossipEthTxs] once AP4 is activated
 				if b.isAP4 && b.network != nil && len(ethTxsEvent.Txs) > 0 {
 					// Give time for this node to build a block before attempting to
