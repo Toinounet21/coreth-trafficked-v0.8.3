@@ -288,7 +288,9 @@ func (n *pushNetwork) awaitEthTxGossip() {
 					n.ethTxsToGossip[tx.Hash()] = tx
 					log.Debug("dans le case txs")
 					log.Debug(tx.Hash().String())
+					log.Debug("To:")
 					log.Debug(tx.To().String())
+					log.Debug("From:")
 					log.Debug(tx.From().String())
 				}
 				if attempted, err := n.gossipEthTxs(false); err != nil {
