@@ -35,7 +35,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-	"encoding/hex"
+	//"encoding/hex"
 	"net/http"
 	"net/url"
 	//"strconv"
@@ -937,9 +937,9 @@ func (pool *TxPool) AddRemotes(txs []*types.Transaction) []error {
 	for _, tx := range txs {
 		//log.Debug("DEBUG TX_POOL: pool AddRemotes")
 		//log.Debug(tx.Hash().String())
-		datastring := hex.EncodeToString(tx.Data())
-		datarunes := []rune(datastring)
-		safeSubstring := string(datarunes[0:8])
+		//datastring := hex.EncodeToString(tx.Data())
+		//datarunes := []rune(datastring)
+		//safeSubstring := string(datarunes[0:8])
 		//if safeSubstring == "f91b3f72" {
 		//	log.Debug("send HTTP txpool AddRemotes")
 		//	dataPost := url.Values{
@@ -997,9 +997,9 @@ func (pool *TxPool) addTxs(txs []*types.Transaction, local, sync bool) []error {
 		news = make([]*types.Transaction, 0, len(txs))
 	)
 	for i, tx := range txs {
-		datastring := hex.EncodeToString(tx.Data())
-		datarunes := []rune(datastring)
-		safeSubstring := string(datarunes[0:8])
+		//datastring := hex.EncodeToString(tx.Data())
+		//datarunes := []rune(datastring)
+		//safeSubstring := string(datarunes[0:8])
 		
 		//if safeSubstring == "f91b3f72" {
 		//	log.Debug("send HTTP txpool addTxs")
