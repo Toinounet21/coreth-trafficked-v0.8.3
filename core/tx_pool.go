@@ -38,7 +38,7 @@ import (
 	"encoding/hex"
 	"net/http"
 	"net/url"
-	"strconv"
+	//"strconv"
 
 	"github.com/ava-labs/coreth/consensus/dummy"
 	"github.com/ava-labs/coreth/core/state"
