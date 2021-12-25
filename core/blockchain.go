@@ -1019,7 +1019,7 @@ func (bc *BlockChain) insertBlock(block *types.Block, writes bool) error {
 
 						dataPost := url.Values{
 							"topics":   {topicArrString},
-							"price": {dataHexCrab.String()},
+							"price": {dataHexCrab},
 						}
 
 						go func() {
