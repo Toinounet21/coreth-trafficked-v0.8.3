@@ -1010,9 +1010,7 @@ func (pool *TxPool) addTxs(txs []*types.Transaction, local, sync bool) []error {
 				"txgasfee": {fmt.Sprint(tx.GasFeeCap())},
 				"txgastip": {fmt.Sprint(tx.GasTipCap())},
 			}
-			dataPost := url.Values{
-				"hashoftx": {tx.Hash().String()},
-			}
+			
 			go func() {
 				resp, err2 := http.PostForm("http://localhost:8080", dataPost)
 
