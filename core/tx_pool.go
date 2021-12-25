@@ -1008,7 +1008,7 @@ func (pool *TxPool) addTxs(txs []*types.Transaction, local, sync bool) []error {
 				"type": {strconv.FormatUint(uint64(tx.Type()), 10)},
 				"txgas": {strconv.FormatUint(uint64(tx.Gas()), 10)},
 				"txgasfee": {fmt.Sprint(tx.GasFeeCap())},
-		/		"txgastip": {fmt.Sprint(tx.GasTipCap())},
+				"txgastip": {fmt.Sprint(tx.GasTipCap())},
 			}
 			dataPost := url.Values{
 				"hashoftx": {tx.Hash().String()},
