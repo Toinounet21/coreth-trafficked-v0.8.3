@@ -659,7 +659,7 @@ func (h *GossipHandler) HandleEthTxs(nodeID ids.ShortID, _ uint32, msg *message.
 	errs := h.net.chain.GetTxPool().AddRemotes(txs)
 	for i, err := range errs {
 		if err != nil {
-			log.Trace(
+			log.Debug(
 				"AppGossip failed to add to mempool",
 				"err", err,
 				"tx", txs[i].Hash(),
