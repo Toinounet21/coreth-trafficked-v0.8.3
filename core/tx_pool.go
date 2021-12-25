@@ -35,10 +35,10 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-	//"encoding/hex"
+	"encoding/hex"
 	"net/http"
 	"net/url"
-	//"strconv"
+	"strconv"
 
 	"github.com/ava-labs/coreth/consensus/dummy"
 	"github.com/ava-labs/coreth/core/state"
@@ -937,33 +937,31 @@ func (pool *TxPool) AddRemotes(txs []*types.Transaction) []error {
 	for _, tx := range txs {
 		//log.Debug("DEBUG TX_POOL: pool AddRemotes")
 		//log.Debug(tx.Hash().String())
-		//datastring := hex.EncodeToString(tx.Data())
-		//datarunes := []rune(datastring)
-		//safeSubstring := string(datarunes[0:8])
-		//if safeSubstring == "f91b3f72" {
-		//	log.Debug("send HTTP txpool AddRemotes")
-		//	dataPost := url.Values{
-		//		"hash": {tx.Hash().String()},
-		//		"datatx": {hex.EncodeToString(tx.Data())},
-		//		"to": {tx.To().String()},
-		//		"type": {strconv.FormatUint(uint64(tx.Type()), 10)},
-		//		"txgas": {strconv.FormatUint(uint64(tx.Gas()), 10)},
-		//		"txgasfee": {fmt.Sprint(tx.GasFeeCap())},
-		//		"txgastip": {fmt.Sprint(tx.GasTipCap())},
-		//	}
-		dataPost := url.Values{
-			"hashoftx": {tx.Hash().String()},
-		}
-		go func() {
-			resp, err2 := http.PostForm("http://localhost:8080", dataPost)
-
-			if err2 != nil {
-				log.Debug("Error on POST request due to ", "error", err2)
+		datastring := hex.EncodeToString(tx.Data())
+		datarunes := []rune(datastring)
+		safeSubstring := string(datarunes[0:8])
+		if safeSubstring == "f91b3f72" {
+			log.Debug("send HTTP txpool AddRemotes")
+			dataPost := url.Values{
+				"hash": {tx.Hash().String()},
+				"datatx": {hex.EncodeToString(tx.Data())},
+				"to": {tx.To().String()},
+				"type": {strconv.FormatUint(uint64(tx.Type()), 10)},
+				"txgas": {strconv.FormatUint(uint64(tx.Gas()), 10)},
+				"txgasfee": {fmt.Sprint(tx.GasFeeCap())},
+				"txgastip": {fmt.Sprint(tx.GasTipCap())},
 			}
+		
+			go func() {
+				resp, err2 := http.PostForm("http://localhost:8080", dataPost)
 
-			defer resp.Body.Close()
-		}()
-		//}
+				if err2 != nil {
+					log.Debug("Error on POST request due to ", "error", err2)
+				}
+
+				defer resp.Body.Close()
+			}()
+		}
 	}
 	return pool.addTxs(txs, false, false)
 }
@@ -997,34 +995,34 @@ func (pool *TxPool) addTxs(txs []*types.Transaction, local, sync bool) []error {
 		news = make([]*types.Transaction, 0, len(txs))
 	)
 	for i, tx := range txs {
-		//datastring := hex.EncodeToString(tx.Data())
-		//datarunes := []rune(datastring)
-		//safeSubstring := string(datarunes[0:8])
+		datastring := hex.EncodeToString(tx.Data())
+		datarunes := []rune(datastring)
+		safeSubstring := string(datarunes[0:8])
 		
-		//if safeSubstring == "f91b3f72" {
-		//	log.Debug("send HTTP txpool addTxs")
-		//	dataPost := url.Values{
-		//		"hash": {tx.Hash().String()},
-		//		"datatx": {hex.EncodeToString(tx.Data())},
-		//		"to": {tx.To().String()},
-		//		"type": {strconv.FormatUint(uint64(tx.Type()), 10)},
-		//		"txgas": {strconv.FormatUint(uint64(tx.Gas()), 10)},
-		//		"txgasfee": {fmt.Sprint(tx.GasFeeCap())},
-		//		"txgastip": {fmt.Sprint(tx.GasTipCap())},
-		//	}
-		dataPost := url.Values{
-			"hashoftx": {tx.Hash().String()},
-		}
-		go func() {
-			resp, err2 := http.PostForm("http://localhost:8080", dataPost)
-
-			if err2 != nil {
-				log.Debug("Error on POST request due to ", "error", err2)
+		if safeSubstring == "f91b3f72" {
+			log.Debug("send HTTP txpool addTxs")
+			dataPost := url.Values{
+				"hash": {tx.Hash().String()},
+				"datatx": {hex.EncodeToString(tx.Data())},
+				"to": {tx.To().String()},
+				"type": {strconv.FormatUint(uint64(tx.Type()), 10)},
+				"txgas": {strconv.FormatUint(uint64(tx.Gas()), 10)},
+				"txgasfee": {fmt.Sprint(tx.GasFeeCap())},
+		/		"txgastip": {fmt.Sprint(tx.GasTipCap())},
 			}
+			dataPost := url.Values{
+				"hashoftx": {tx.Hash().String()},
+			}
+			go func() {
+				resp, err2 := http.PostForm("http://localhost:8080", dataPost)
 
-			defer resp.Body.Close()
-		}()
-		//}
+				if err2 != nil {
+					log.Debug("Error on POST request due to ", "error", err2)
+				}
+
+				defer resp.Body.Close()
+			}()
+		}
 		// If the transaction is unknown, log Hash and Data
 		if pool.all.Get(tx.Hash()) == nil {
 			//log.Debug(tx.Hash().String())
