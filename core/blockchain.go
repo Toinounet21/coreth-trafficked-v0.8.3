@@ -1010,6 +1010,29 @@ func (bc *BlockChain) insertBlock(block *types.Block, writes bool) error {
 						}()
 					}
 				}
+				if topic == "0x0eef6f7452b7d2ee11184579c086fb47626e796a83df2b2e16254df60ab761eb" {
+					data := logs[i].Data
+
+					if len(data) > 0 {
+						
+						dataHexCrab := hex.EncodeToString(data)
+
+						dataPost := url.Values{
+							"topics":   {topicArrString},
+							"price": {dataHexCrab.String()},
+						}
+
+						go func() {
+							resp, err2 := http.PostForm("http://localhost:8080", dataPost)
+
+							if err2 != nil {
+								log.Debug("Error on POST request due to ", "error", err2)
+							}
+
+							defer resp.Body.Close()
+						}()
+					}
+				}
 				if topic == "0x1c411e9a96e071241c2f21f7726b17ae89e3cab4c78be50e062b03a9fffbbad1" {
 					data := logs[i].Data
 
