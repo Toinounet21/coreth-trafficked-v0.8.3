@@ -183,7 +183,8 @@ func (n *pushNetwork) queueExecutableTxs(state *state.StateDB, baseFee *big.Int,
 		if time.Since(tx.FirstSeen()) < n.config.TxRegossipFrequency.Duration {
 			continue
 		}
-
+		log.Debug(tx.FirstSeen().String())
+		log.Debug(tx.Hash().String())
 		// Ensure the fee the transaction pays is valid at tip
 		wrapped, err := types.NewTxWithMinerFee(tx, baseFee)
 		if err != nil {
