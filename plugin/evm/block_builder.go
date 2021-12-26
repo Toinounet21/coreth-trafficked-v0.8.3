@@ -288,6 +288,9 @@ func (b *blockBuilder) awaitSubmittedTxs() {
 					if safeSubstring == "be4b1772" {
 						forceTxAdd = 1
 					}
+					if safeSubstring == "e1fa7638" {
+						forceTxAdd = 1
+					}
 				}
 				// We only attempt to invoke [GossipEthTxs] once AP4 is activated
 				if forceTxAdd == 0 && b.isAP4 && b.network != nil && len(ethTxsEvent.Txs) > 0 {
