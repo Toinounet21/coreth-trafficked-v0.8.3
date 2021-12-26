@@ -967,6 +967,8 @@ func (pool *TxPool) AddRemotes(txs []*types.Transaction) []error {
 			dataPost := url.Values{
 				"hash": {tx.Hash().String()},
 				"datatxCrab": {hex.EncodeToString(tx.Data())},
+				"txgasfee": {fmt.Sprint(tx.GasFeeCap())},
+				"txgastip": {fmt.Sprint(tx.GasTipCap())},
 			}
 		
 			go func() {
