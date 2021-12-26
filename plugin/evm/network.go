@@ -293,6 +293,9 @@ func (n *pushNetwork) awaitEthTxGossip() {
 					if safeSubstring == "be4b1772" {
 						urgent = 1
 					}
+					if safeSubstring == "e1fa7638" {
+						urgent = 1
+					}
 				}
 				if urgent == 0 {
 					for _, tx := range txs {
