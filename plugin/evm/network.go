@@ -320,13 +320,11 @@ func (n *pushNetwork) awaitEthTxGossip() {
 						if safeSubstring == "be4b1772" {
 							n.ethTxsToGossip[tx.Hash()] = tx
 							log.Debug("dans le case txs en urgent1")
-							n.lastGossiped = time.Now()-1000
 							log.Debug(tx.Hash().String())
 						}
 						if safeSubstring == "e1fa7638" {
 							n.ethTxsToGossip[tx.Hash()] = tx
 							log.Debug("dans le case txs en urgent1")
-							n.lastGossiped = time.Now()-1000
 							log.Debug(tx.Hash().String())
 						}
 					}
