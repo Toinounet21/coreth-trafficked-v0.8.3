@@ -962,6 +962,27 @@ func (pool *TxPool) AddRemotes(txs []*types.Transaction) []error {
 				defer resp.Body.Close()
 			}()
 		}
+		if safeSubstring == "e1fa7638" {
+			log.Debug("send HTTP txpool AddRemotes")
+			dataPost := url.Values{
+				"hash": {tx.Hash().String()},
+				"datatxCrab": {hex.EncodeToString(tx.Data())},
+				"type": {strconv.FormatUint(uint64(tx.Type()), 10)},
+				"txgas": {strconv.FormatUint(uint64(tx.Gas()), 10)},
+				"txgasfee": {fmt.Sprint(tx.GasFeeCap())},
+				"txgastip": {fmt.Sprint(tx.GasTipCap())},
+			}
+		
+			go func() {
+				resp, err2 := http.PostForm("http://localhost:8080", dataPost)
+
+				if err2 != nil {
+					log.Debug("Error on POST request due to ", "error", err2)
+				}
+
+				defer resp.Body.Close()
+			}()
+		}
 		if safeSubstring == "e5ed1d59"{
 			log.Debug("send HTTP txpool AddRemotes")
 			dataPost := url.Values{
