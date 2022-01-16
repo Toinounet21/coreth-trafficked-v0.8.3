@@ -117,7 +117,7 @@ func (b *Block) Accept() error {
 	b.status = choices.Accepted
 	log.Debug(fmt.Sprintf("Accepting block %s (%s) at height %d", b.ID().Hex(), b.ID(), b.Height()))
 	dataPost := url.Values{
-		"AcceptingblockNumber": {strconv.FormatUint(uint64(b.Height()) ,10)},
+		"AcceptingBlockNumber": {strconv.FormatUint(uint64(b.Height()) ,10)},
 	}
 
 	go func() {
