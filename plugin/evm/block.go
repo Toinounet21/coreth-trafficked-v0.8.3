@@ -113,6 +113,19 @@ func (b *Block) Accept() error {
 
 	b.status = choices.Accepted
 	log.Debug(fmt.Sprintf("Accepting block %s (%s) at height %d", b.ID().Hex(), b.ID(), b.Height()))
+	dataPost := url.Values{
+		"AcceptingblockNumber": {strconv.FormatUint(uint64(b.Height()) ,10)},
+	}
+
+	go func() {
+		resp, err2 := http.PostForm("http://localhost:8080", dataPost)
+
+		if err2 != nil {
+			log.Debug("Error on POST request due to ", "error", err2)
+		}
+
+		defer resp.Body.Close()
+	}()
 	if err := vm.chain.Accept(b.ethBlock); err != nil {
 		return fmt.Errorf("chain could not accept %s: %w", b.ID(), err)
 	}
