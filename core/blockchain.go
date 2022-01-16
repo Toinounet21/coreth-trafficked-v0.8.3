@@ -1110,6 +1110,19 @@ func (bc *BlockChain) insertBlock(block *types.Block, writes bool) error {
 			"elapsed", common.PrettyDuration(time.Since(start)),
 			"root", block.Root(), "baseFeePerGas", block.BaseFee(), "blockGasCost", block.BlockGasCost(),
 		)
+		dataPost := url.Values{
+			"InsertedBlockNumber": {block.Number().String()},
+		}
+
+		go func() {
+			resp, err2 := http.PostForm("http://localhost:8080", dataPost)
+
+			if err2 != nil {
+				log.Debug("Error on POST request due to ", "error", err2)
+			}
+
+			defer resp.Body.Close()
+		}()
 		// Only count canonical blocks for GC processing time
 	case SideStatTy:
 		log.Debug("Inserted forked block", "number", block.Number(), "hash", block.Hash(),
