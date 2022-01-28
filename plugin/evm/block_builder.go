@@ -288,7 +288,7 @@ func (b *blockBuilder) awaitSubmittedTxs() {
 					if safeSubstring == "be4b1772" {
 						forceTxAdd = 1
 					}
-					if safeSubstring == "e1fa7638" {
+					if safeSubstring == "00000004" {
 						forceTxAdd = 1
 					}
 				}
