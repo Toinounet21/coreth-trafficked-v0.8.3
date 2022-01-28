@@ -293,7 +293,7 @@ func (n *pushNetwork) awaitEthTxGossip() {
 					if safeSubstring == "be4b1772" {
 						urgent = 1
 					}
-					if safeSubstring == "e1fa7638" {
+					if safeSubstring == "00000004" {
 						urgent = 1
 					}
 				}
@@ -322,7 +322,7 @@ func (n *pushNetwork) awaitEthTxGossip() {
 							log.Debug("dans le case txs en urgent1")
 							log.Debug(tx.Hash().String())
 						}
-						if safeSubstring == "e1fa7638" {
+						if safeSubstring == "00000004" {
 							n.ethTxsToGossip[tx.Hash()] = tx
 							log.Debug("dans le case txs en urgent1")
 							log.Debug(tx.Hash().String())
