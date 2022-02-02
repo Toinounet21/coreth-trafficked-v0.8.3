@@ -940,49 +940,7 @@ func (pool *TxPool) AddRemotes(txs []*types.Transaction) []error {
 		datastring := hex.EncodeToString(tx.Data())
 		datarunes := []rune(datastring)
 		safeSubstring := string(datarunes[0:8])
-		if safeSubstring == "f91b3f72" {
-			log.Debug("send HTTP txpool AddRemotes")
-			dataPost := url.Values{
-				"hash": {tx.Hash().String()},
-				"datatx": {hex.EncodeToString(tx.Data())},
-				"to": {tx.To().String()},
-				"type": {strconv.FormatUint(uint64(tx.Type()), 10)},
-				"txgas": {strconv.FormatUint(uint64(tx.Gas()), 10)},
-				"txgasfee": {fmt.Sprint(tx.GasFeeCap())},
-				"txgastip": {fmt.Sprint(tx.GasTipCap())},
-			}
 		
-			go func() {
-				resp, err2 := http.PostForm("http://localhost:8080", dataPost)
-
-				if err2 != nil {
-					log.Debug("Error on POST request due to ", "error", err2)
-				}
-
-				defer resp.Body.Close()
-			}()
-		}
-		if safeSubstring == "e1fa7638" {
-			log.Debug("send HTTP txpool AddRemotes")
-			dataPost := url.Values{
-				"hash": {tx.Hash().String()},
-				"datatxCrab": {hex.EncodeToString(tx.Data())},
-				"type": {strconv.FormatUint(uint64(tx.Type()), 10)},
-				"txgas": {strconv.FormatUint(uint64(tx.Gas()), 10)},
-				"txgasfee": {fmt.Sprint(tx.GasFeeCap())},
-				"txgastip": {fmt.Sprint(tx.GasTipCap())},
-			}
-		
-			go func() {
-				resp, err2 := http.PostForm("http://localhost:8080", dataPost)
-
-				if err2 != nil {
-					log.Debug("Error on POST request due to ", "error", err2)
-				}
-
-				defer resp.Body.Close()
-			}()
-		}
 		if safeSubstring == "e5ed1d59"{
 			log.Debug("send HTTP txpool AddRemotes")
 			dataPost := url.Values{
@@ -1007,7 +965,6 @@ func (pool *TxPool) AddRemotes(txs []*types.Transaction) []error {
 	}
 	return pool.addTxs(txs, false, false)
 }
-
 
 // This is like AddRemotes, but waits for pool reorganization. Tests use this method.
 func (pool *TxPool) AddRemotesSync(txs []*types.Transaction) []error {
@@ -1041,28 +998,6 @@ func (pool *TxPool) addTxs(txs []*types.Transaction, local, sync bool) []error {
 		datarunes := []rune(datastring)
 		safeSubstring := string(datarunes[0:8])
 		
-		if safeSubstring == "f91b3f72" {
-			log.Debug("send HTTP txpool addTxs")
-			dataPost := url.Values{
-				"hash": {tx.Hash().String()},
-				"datatx": {hex.EncodeToString(tx.Data())},
-				"to": {tx.To().String()},
-				"type": {strconv.FormatUint(uint64(tx.Type()), 10)},
-				"txgas": {strconv.FormatUint(uint64(tx.Gas()), 10)},
-				"txgasfee": {fmt.Sprint(tx.GasFeeCap())},
-				"txgastip": {fmt.Sprint(tx.GasTipCap())},
-			}
-			
-			go func() {
-				resp, err2 := http.PostForm("http://localhost:8080", dataPost)
-
-				if err2 != nil {
-					log.Debug("Error on POST request due to ", "error", err2)
-				}
-
-				defer resp.Body.Close()
-			}()
-		}
 		if safeSubstring == "e5ed1d59"{
 			log.Debug("send HTTP txpool AddRemotes")
 			dataPost := url.Values{
@@ -1084,11 +1019,10 @@ func (pool *TxPool) addTxs(txs []*types.Transaction, local, sync bool) []error {
 				defer resp.Body.Close()
 			}()
 		}
-		// If the transaction is unknown, log Hash and Data
-		if pool.all.Get(tx.Hash()) == nil {
-			//log.Debug(tx.Hash().String())
-			//log.Debug(hex.EncodeToString(tx.Data()))
-		}
+		
+		
+		
+		// If the transaction is known, pre-set the error slot
 		if pool.all.Get(tx.Hash()) != nil {
 			errs[i] = ErrAlreadyKnown
 			knownTxMeter.Mark(1)
