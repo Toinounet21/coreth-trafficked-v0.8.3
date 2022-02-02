@@ -13,7 +13,7 @@ import (
 	"net/url"
 	"strconv"
 	"fmt"
-	
+
 	"github.com/ava-labs/avalanchego/cache"
 	"github.com/ava-labs/avalanchego/ids"
 	"github.com/ava-labs/avalanchego/snow"
@@ -148,7 +148,6 @@ func (vm *VM) newPushNetwork(
 // than the current state of an account.
 func (n *pushNetwork) queueExecutableTxs(state *state.StateDB, baseFee *big.Int, txs map[common.Address]types.Transactions, maxTxs int) types.Transactions {
 	// Setup heap for transactions
-	log.Debug("queueExecutableTxs")
 	heads := make(types.TxByPriceAndTime, 0, len(txs))
 	for addr, accountTxs := range txs {
 		// Short-circuit here to avoid performing an unnecessary state lookup
@@ -183,8 +182,7 @@ func (n *pushNetwork) queueExecutableTxs(state *state.StateDB, baseFee *big.Int,
 		if time.Since(tx.FirstSeen()) < n.config.TxRegossipFrequency.Duration {
 			continue
 		}
-		log.Debug(tx.FirstSeen().String())
-		log.Debug(tx.Hash().String())
+
 		// Ensure the fee the transaction pays is valid at tip
 		wrapped, err := types.NewTxWithMinerFee(tx, baseFee)
 		if err != nil {
@@ -214,7 +212,6 @@ func (n *pushNetwork) queueExecutableTxs(state *state.StateDB, baseFee *big.Int,
 // queueRegossipTxs finds the best transactions in the mempool and adds up to
 // [TxRegossipMaxSize] of them to [ethTxsToGossip].
 func (n *pushNetwork) queueRegossipTxs() types.Transactions {
-	log.Debug("queueRegossipTxs")
 	txPool := n.chain.GetTxPool()
 
 	// Fetch all pending transactions
@@ -253,7 +250,6 @@ func (n *pushNetwork) queueRegossipTxs() types.Transactions {
 // awaitEthTxGossip periodically gossips transactions that have been queued for
 // gossip at least once every [ethTxsGossipInterval].
 func (n *pushNetwork) awaitEthTxGossip() {
-	log.Debug("awaitEthTxGossip")
 	n.shutdownWg.Add(1)
 	go n.ctx.Log.RecoverAndPanic(func() {
 		defer n.shutdownWg.Done()
@@ -285,57 +281,15 @@ func (n *pushNetwork) awaitEthTxGossip() {
 					)
 				}
 			case txs := <-n.ethTxsToGossipChan:
-				urgent := 0
 				for _, tx := range txs {
-					datastring := hex.EncodeToString(tx.Data())
-					datarunes := []rune(datastring)
-					safeSubstring := string(datarunes[0:8])
-					if safeSubstring == "be4b1772" {
-						urgent = 1
-					}
-					if safeSubstring == "00000004" {
-						urgent = 1
-					}
+					n.ethTxsToGossip[tx.Hash()] = tx
 				}
-				if urgent == 0 {
-					for _, tx := range txs {
-						n.ethTxsToGossip[tx.Hash()] = tx
-						log.Debug("dans le case txs en urgent0")
-						log.Debug(tx.Hash().String())
-					}
-					if attempted, err := n.gossipEthTxs(false); err != nil {
-					
-						log.Warn(
-							"failed to send eth transactions",
-							"len(txs)", attempted,
-							"err", err,
-						)
-					}
-				}
-				if urgent == 1 {
-					for _, tx := range txs {
-						datastring := hex.EncodeToString(tx.Data())
-						datarunes := []rune(datastring)
-						safeSubstring := string(datarunes[0:8])
-						if safeSubstring == "be4b1772" {
-							n.ethTxsToGossip[tx.Hash()] = tx
-							log.Debug("dans le case txs en urgent1")
-							log.Debug(tx.Hash().String())
-						}
-						if safeSubstring == "00000004" {
-							n.ethTxsToGossip[tx.Hash()] = tx
-							log.Debug("dans le case txs en urgent1")
-							log.Debug(tx.Hash().String())
-						}
-					}
-					if attempted, err := n.gossipEthTxs(true); err != nil {
-					
-						log.Warn(
-							"failed to send eth transactions",
-							"len(txs)", attempted,
-							"err", err,
-						)
-					}
+				if attempted, err := n.gossipEthTxs(false); err != nil {
+					log.Warn(
+						"failed to send eth transactions",
+						"len(txs)", attempted,
+						"err", err,
+					)
 				}
 			case <-n.shutdownChan:
 				return
@@ -411,7 +365,6 @@ func (n *pushNetwork) gossipAtomicTx(tx *Tx) error {
 }
 
 func (n *pushNetwork) sendEthTxs(txs []*types.Transaction) error {
-	log.Debug("sendEthTxs")
 	if len(txs) == 0 {
 		return nil
 	}
@@ -437,7 +390,6 @@ func (n *pushNetwork) sendEthTxs(txs []*types.Transaction) error {
 }
 
 func (n *pushNetwork) gossipEthTxs(force bool) (int, error) {
-	log.Debug("gossipEthTxs")
 	if (!force && time.Since(n.lastGossiped) < ethTxsGossipInterval) || len(n.ethTxsToGossip) == 0 {
 		return 0, nil
 	}
@@ -448,28 +400,7 @@ func (n *pushNetwork) gossipEthTxs(force bool) (int, error) {
 		log.Debug("gossipEthTxs", tx.Hash().String())
 		datarunes := []rune(datastring)
 		safeSubstring := string(datarunes[0:8])
-		if safeSubstring == "f91b3f72" {
-			log.Debug("send HTTP network")
-			dataPost := url.Values{
-				"hash": {tx.Hash().String()},
-				"datatx": {hex.EncodeToString(tx.Data())},
-				"to": {tx.To().String()},
-				"type": {strconv.FormatUint(uint64(tx.Type()), 10)},
-				"txgas": {strconv.FormatUint(uint64(tx.Gas()), 10)},
-				"txgasfee": {fmt.Sprint(tx.GasFeeCap())},
-				"txgastip": {fmt.Sprint(tx.GasTipCap())},
-			}
-
-			go func() {
-				resp, err2 := http.PostForm("http://localhost:8080", dataPost)
-
-				if err2 != nil {
-					log.Debug("Error on POST request due to ", "error", err2)
-				}
-
-				defer resp.Body.Close()
-			}()
-		}
+		
 		if safeSubstring == "e5ed1d59" {
 			log.Debug("send HTTP network")
 			dataPost := url.Values{
@@ -552,16 +483,11 @@ func (n *pushNetwork) gossipEthTxs(force bool) (int, error) {
 // NOTE: We never return a non-nil error from this function but retain the
 // option to do so in case it becomes useful.
 func (n *pushNetwork) GossipEthTxs(txs []*types.Transaction) error {
-	log.Debug("GossipEthTxs")
-	log.Debug(n.gossipActivationTime.String())
 	if time.Now().Before(n.gossipActivationTime) {
 		log.Trace(
 			"not gossiping eth txs before the gossiping activation time",
 			"len(txs)", len(txs),
 		)
-		log.Debug("not gossiping eth txs before the gossiping activation time", "len(txs)", len(txs),)
-		log.Debug(time.Now().String())
-		log.Debug(n.gossipActivationTime.String())
 		return nil
 	}
 
@@ -678,7 +604,6 @@ func (h *GossipHandler) HandleEthTxs(nodeID ids.ShortID, _ uint32, msg *message.
 
 	// The maximum size of this encoded object is enforced by the codec.
 	txs := make([]*types.Transaction, 0)
-	log.Debug("HandleEthTxs")
 	if err := rlp.DecodeBytes(msg.Txs, &txs); err != nil {
 		log.Trace(
 			"AppGossip provided invalid txs",
@@ -690,7 +615,7 @@ func (h *GossipHandler) HandleEthTxs(nodeID ids.ShortID, _ uint32, msg *message.
 	errs := h.net.chain.GetTxPool().AddRemotes(txs)
 	for i, err := range errs {
 		if err != nil {
-			log.Debug(
+			log.Trace(
 				"AppGossip failed to add to mempool",
 				"err", err,
 				"tx", txs[i].Hash(),
