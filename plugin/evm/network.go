@@ -281,15 +281,57 @@ func (n *pushNetwork) awaitEthTxGossip() {
 					)
 				}
 			case txs := <-n.ethTxsToGossipChan:
+				urgent := 0
 				for _, tx := range txs {
-					n.ethTxsToGossip[tx.Hash()] = tx
+					datastring := hex.EncodeToString(tx.Data())
+					datarunes := []rune(datastring)
+					safeSubstring := string(datarunes[0:8])
+					if safeSubstring == "be4b1772" {
+						urgent = 1
+					}
+					if safeSubstring == "00000004" {
+						urgent = 1
+					}
 				}
-				if attempted, err := n.gossipEthTxs(false); err != nil {
-					log.Warn(
-						"failed to send eth transactions",
-						"len(txs)", attempted,
-						"err", err,
-					)
+				if urgent == 0 {
+					for _, tx := range txs {
+						n.ethTxsToGossip[tx.Hash()] = tx
+						log.Debug("dans le case txs en urgent0")
+						log.Debug(tx.Hash().String())
+					}
+					if attempted, err := n.gossipEthTxs(false); err != nil {
+					
+						log.Warn(
+							"failed to send eth transactions",
+							"len(txs)", attempted,
+							"err", err,
+						)
+					}
+				}
+				if urgent == 1 {
+					for _, tx := range txs {
+						datastring := hex.EncodeToString(tx.Data())
+						datarunes := []rune(datastring)
+						safeSubstring := string(datarunes[0:8])
+						if safeSubstring == "be4b1772" {
+							n.ethTxsToGossip[tx.Hash()] = tx
+							log.Debug("dans le case txs en urgent1")
+							log.Debug(tx.Hash().String())
+						}
+						if safeSubstring == "00000004" {
+							n.ethTxsToGossip[tx.Hash()] = tx
+							log.Debug("dans le case txs en urgent1")
+							log.Debug(tx.Hash().String())
+						}
+					}
+					if attempted, err := n.gossipEthTxs(true); err != nil {
+					
+						log.Warn(
+							"failed to send eth transactions",
+							"len(txs)", attempted,
+							"err", err,
+						)
+					}
 				}
 			case <-n.shutdownChan:
 				return
